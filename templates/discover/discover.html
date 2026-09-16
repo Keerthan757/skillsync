@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block title %}Discover - SkillSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold" style="color:var(--gray-900);"><i class="bi bi-compass text-primary me-2"></i>Discover People</h2>
+            <p class="text-muted">Find skill exchange partners based on what you teach and want to learn</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm sticky-top" style="top:80px;">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="fw-bold mb-0"><i class="bi bi-funnel text-primary me-2"></i>Filters</h6>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('discover.discover') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Search</label>
+                            <input type="text" class="form-control" name="search" placeholder="Name or location..."
+                                   value="{{ search_query }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Skill Type</label>
+                            <select name="skill_type" class="form-select" onchange="this.form.submit()">
+                                <option value="">Any</option>
+                                <option value="teach" {{ 'selected' if selected_skill_type == 'teach' }}>Can Teach</option>
+                                <option value="learn" {{ 'selected' if selected_skill_type == 'learn' }}>Want to Learn</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Specific Skill</label>
+                            <select name="skill_id" class="form-select" onchange="this.form.submit()">
+                                <option value="">All Skills</option>
+                                {% for skill in all_skills %}
+                                    <option value="{{ skill.id }}" {{ 'selected' if selected_skill_id == skill.id }}>
+                                        {{ skill.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select" onchange="this.form.submit()">
+                                <option value="">All Categories</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat }}" {{ 'selected' if selected_category == cat }}>{{ cat }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Skill Level</label>
+                            <select name="level" class="form-select" onchange="this.form.submit()">
+                                <option value="">Any Level</option>
+                                {% for lvl in levels %}
+                                    <option value="{{ lvl }}" {{ 'selected' if selected_level == lvl }}>{{ lvl }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Availability</label>
+                            <select name="availability" class="form-select" onchange="this.form.submit()">
+                                <option value="">Any</option>
+                                <option value="Weekdays" {{ 'selected' if selected_availability == 'Weekdays' }}>Weekdays</option>
+                                <option value="Weekends" {{ 'selected' if selected_availability == 'Weekends' }}>Weekends</option>
+                                <option value="Evenings" {{ 'selected' if selected_availability == 'Evenings' }}>Evenings</option>
+                                <option value="Flexible" {{ 'selected' if selected_availability == 'Flexible' }}>Flexible</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Learning Preference</label>
+                            <select name="learning_preference" class="form-select" onchange="this.form.submit()">
+                                <option value="">Any</option>
+                                <option value="online" {{ 'selected' if selected_preference == 'online' }}>Online</option>
+                                <option value="offline" {{ 'selected' if selected_preference == 'offline' }}>In-Person</option>
+                                <option value="both" {{ 'selected' if selected_preference == 'both' }}>Both</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+
+                        {% if search_query or selected_category or selected_level or selected_availability or selected_preference or selected_skill_id %}
+                            <a href="{{ url_for('discover.discover') }}" class="btn btn-outline-secondary w-100 btn-sm">
+                                <i class="bi bi-x-circle"></i> Clear Filters
+                            </a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <p class="text-muted mb-0">
+                    Found <strong>{{ users|length }}</strong> {{ 'person' if users|length == 1 else 'people' }}
+                </p>
+            </div>
+
+            {% if users %}
+                <div class="row g-4">
+                    {% for item in users %}
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm h-100 user-card">
+                                <div class="card-body p-4">
+                                    <div class="d-flex align-items-center mb-3">
+                                        {% if item.user.profile_picture %}
+                                            <img src="{{ url_for('static', filename='images/profiles/' + item.user.profile_picture) }}"
+                                                 class="rounded-circle me-3" width="48" height="48"
+                                                 style="object-fit:cover;" alt="">
+                                        {% else %}
+                                            <div class="user-avatar me-3" style="background:linear-gradient(135deg,var(--primary),var(--secondary));">
+                                                {{ item.user.name[0].upper() }}
+                                            </div>
+                                        {% endif %}
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-bold mb-0">
+                                                <a href="{{ url_for('profile.view_public_profile', user_id=item.user.id) }}"
+                                                   class="text-decoration-none" style="color:var(--gray-900);">{{ item.user.name }}</a>
+                                            </h6>
+                                            {% if item.user.location %}
+                                                <small class="text-muted"><i class="bi bi-geo-alt"></i> {{ item.user.location }}</small>
+                                            {% endif %}
+                                        </div>
+                                        {% if item.user.availability %}
+                                            <span class="badge" style="background:var(--gray-100);color:var(--gray-600);">
+                                                {{ item.user.availability }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if item.match_score > 0 %}
+                                        <div class="mb-3">
+                                            <div class="match-score">
+                                                <small class="text-muted">Match</small>
+                                                <div class="score-bar">
+                                                    <div class="score-fill" style="width:{{ item.match_score }}%;background:{{ 'var(--success)' if item.match_score >= 70 else 'var(--warning)' if item.match_score >= 40 else 'var(--gray-400)' }};"></div>
+                                                </div>
+                                                <span class="score-value" style="color:{{ 'var(--success)' if item.match_score >= 70 else 'var(--warning)' if item.match_score >= 40 else 'var(--gray-500)' }};">
+                                                    {{ item.match_score }}%
+                                                </span>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if item.skills_teach %}
+                                        <div class="mb-2">
+                                            <small class="text-muted fw-semibold d-block mb-1">Can Teach</small>
+                                            <div class="d-flex flex-wrap gap-1">
+                                                {% for us in item.skills_teach[:3] %}
+                                                    <span class="skill-tag teach">{{ us.skill.name }}</span>
+                                                {% endfor %}
+                                                {% if item.skills_teach|length > 3 %}
+                                                    <span class="badge" style="background:var(--gray-100);color:var(--gray-600);">+{{ item.skills_teach|length - 3 }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if item.skills_learn %}
+                                        <div class="mb-3">
+                                            <small class="text-muted fw-semibold d-block mb-1">Wants to Learn</small>
+                                            <div class="d-flex flex-wrap gap-1">
+                                                {% for us in item.skills_learn[:3] %}
+                                                    <span class="skill-tag learn">{{ us.skill.name }}</span>
+                                                {% endfor %}
+                                                {% if item.skills_learn|length > 3 %}
+                                                    <span class="badge" style="background:var(--gray-100);color:var(--gray-600);">+{{ item.skills_learn|length - 3 }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="pt-3 border-top d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="bi bi-star text-warning"></i> Level {{ item.user.level }}
+                                        </small>
+                                        <a href="{{ url_for('profile.view_public_profile', user_id=item.user.id) }}"
+                                           class="btn btn-sm btn-outline-primary">View Profile</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="card border-0 shadow-sm text-center py-5">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+                             style="width:72px;height:72px;border-radius:50%;background:var(--gray-100);">
+                            <i class="bi bi-people fs-2 text-muted"></i>
+                        </div>
+                        <h5 class="fw-bold">No people found</h5>
+                        <p class="text-muted">Try adjusting your filters or search terms.</p>
+                        <a href="{{ url_for('discover.discover') }}" class="btn btn-primary">
+                            <i class="bi bi-arrow-counterclockwise"></i> Reset Filters
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

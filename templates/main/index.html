@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}SkillSync - Smart Peer-to-Peer Skill Exchange{% endblock %}
+
+{% block content %}
+<section class="hero text-center">
+    <div class="container position-relative" style="z-index:1;">
+        <div class="mb-4">
+            <span class="badge bg-white text-primary px-3 py-2" style="border-radius:99px;font-size:0.85rem;">
+                <i class="bi bi-stars"></i> Smart Skill Exchange Platform
+            </span>
+        </div>
+        <h1 class="text-white">Learn Anything.<br>Teach Everything.</h1>
+        <p class="lead text-white mb-5 mx-auto" style="max-width:550px;opacity:0.9;">
+            SkillSync connects people who want to learn with people who can teach. Find your perfect skill exchange partner.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg px-5" style="font-weight:700;">
+                Start for Free <i class="bi bi-arrow-right"></i>
+            </a>
+            <a href="{{ url_for('skills.browse_skills') }}" class="btn btn-outline-light btn-lg px-5" style="font-weight:600;">
+                Browse Skills
+            </a>
+        </div>
+        <div class="mt-5 d-flex justify-content-center gap-5 flex-wrap" style="opacity:0.8;">
+            <div class="text-white"><strong class="fs-4">56+</strong><br><small>Skills Available</small></div>
+            <div class="text-white"><strong class="fs-4">11</strong><br><small>Categories</small></div>
+            <div class="text-white"><strong class="fs-4">100%</strong><br><small>Free to Use</small></div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 mt-4">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold" style="color:var(--gray-900);">How It Works</h2>
+            <p class="text-muted mx-auto" style="max-width:500px;">Three simple steps to start exchanging skills with others.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-4">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+                             style="width:72px;height:72px;border-radius:var(--radius-xl);background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(14,165,233,0.1));">
+                            <i class="bi bi-mortarboard fs-2" style="color:var(--primary);"></i>
+                        </div>
+                        <h5 class="fw-bold">1. Add Your Skills</h5>
+                        <p class="text-muted small mb-0">Tell us what you can teach and what you want to learn. We'll help you find the perfect match.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-4">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+                             style="width:72px;height:72px;border-radius:var(--radius-xl);background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(6,182,212,0.1));">
+                            <i class="bi bi-people fs-2" style="color:var(--success);"></i>
+                        </div>
+                        <h5 class="fw-bold">2. Find Matches</h5>
+                        <p class="text-muted small mb-0">Our smart algorithm finds compatible skill exchange partners based on your interests.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-4">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+                             style="width:72px;height:72px;border-radius:var(--radius-xl);background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(239,68,68,0.1));">
+                            <i class="bi bi-arrow-left-right fs-2" style="color:var(--accent);"></i>
+                        </div>
+                        <h5 class="fw-bold">3. Exchange Skills</h5>
+                        <p class="text-muted small mb-0">Schedule sessions, learn together, and grow your skills through peer-to-peer exchange.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5" style="background:var(--gray-100);">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-3" style="color:var(--gray-900);">Smart Matching.<br>Better Learning.</h2>
+                <p class="text-muted mb-4">Our algorithm considers skill compatibility, level, availability, and learning preferences to find your ideal skill exchange partner.</p>
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center"
+                             style="width:40px;height:40px;border-radius:var(--radius);background:rgba(16,185,129,0.1);color:var(--success);">
+                            <i class="bi bi-check-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Skill Compatibility</h6>
+                            <small class="text-muted">Finds users who teach what you want to learn</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center"
+                             style="width:40px;height:40px;border-radius:var(--radius);background:rgba(6,182,212,0.1);color:var(--info);">
+                            <i class="bi bi-check-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Level Matching</h6>
+                            <small class="text-muted">Pairs you with appropriate skill levels</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center"
+                             style="width:40px;height:40px;border-radius:var(--radius);background:rgba(99,102,241,0.1);color:var(--primary);">
+                            <i class="bi bi-check-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Availability Sync</h6>
+                            <small class="text-muted">Matches your schedule preferences</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-lg p-4" style="border-radius:var(--radius-2xl);">
+                    <div class="d-flex align-items-center gap-3 mb-4 p-3" style="background:var(--gray-50);border-radius:var(--radius-lg);">
+                        <div class="user-avatar" style="background:linear-gradient(135deg,var(--primary),#7c3aed);">A</div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-0">Alice</h6>
+                            <small class="text-muted">Teaches Python, wants Photoshop</small>
+                        </div>
+                        <span class="badge" style="background:rgba(16,185,129,0.1);color:var(--success);">Expert</span>
+                    </div>
+                    <div class="text-center py-2">
+                        <div style="width:60px;height:60px;margin:0 auto;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;">
+                            <i class="bi bi-arrow-down-up"></i>
+                        </div>
+                        <small class="text-muted d-block mt-2">Smart Match</small>
+                        <strong class="text-primary">92% Compatible</strong>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 mt-2 p-3" style="background:var(--gray-50);border-radius:var(--radius-lg);">
+                        <div class="user-avatar" style="background:linear-gradient(135deg,var(--success),#059669);">B</div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-0">Bob</h6>
+                            <small class="text-muted">Teaches Photoshop, wants Python</small>
+                        </div>
+                        <span class="badge" style="background:rgba(6,182,212,0.1);color:var(--info);">Advanced</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-3" style="color:var(--gray-900);">Ready to Start Learning?</h2>
+        <p class="text-muted mb-4 mx-auto" style="max-width:450px;">Join SkillSync and discover a smarter way to learn and teach skills.</p>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-5">
+            Create Free Account <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+</section>
+{% endblock %}

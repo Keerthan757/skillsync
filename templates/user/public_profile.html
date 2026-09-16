@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}{{ user.name }} - SkillSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        {% if user.profile_picture %}
+                            <img src="{{ url_for('static', filename='images/profiles/' + user.profile_picture) }}"
+                                 class="rounded-circle" width="120" height="120" style="object-fit:cover;"
+                                 alt="Profile Picture">
+                        {% else %}
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center"
+                                 style="width:120px;height:120px;font-size:3rem;">
+                                {{ user.name[0].upper() }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <h4 class="fw-bold">{{ user.name }}</h4>
+
+                    {% if user.location %}
+                        <p class="text-muted small">
+                            <i class="bi bi-geo-alt"></i> {{ user.location }}
+                        </p>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-center gap-3 mb-3">
+                        <div class="text-center">
+                            <h5 class="mb-0 text-primary">{{ user.xp }}</h5>
+                            <small class="text-muted">XP</small>
+                        </div>
+                        <div class="text-center">
+                            <h5 class="mb-0 text-success">Level {{ user.level }}</h5>
+                            <small class="text-muted">Level</small>
+                        </div>
+                        <div class="text-center">
+                            <h5 class="mb-0 text-danger">{{ user.learning_streak }}</h5>
+                            <small class="text-muted">Streak</small>
+                        </div>
+                    </div>
+
+                    {% if session.get('user_id') and session.get('user_id') != user.id %}
+                        <a href="#" class="btn btn-primary w-100">
+                            <i class="bi bi-envelope"></i> Send Exchange Request
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0"><i class="bi bi-info-circle"></i> About</h6>
+                </div>
+                <div class="card-body">
+                    {% if user.bio %}
+                        <p class="mb-3">{{ user.bio }}</p>
+                    {% else %}
+                        <p class="text-muted mb-3">No bio added.</p>
+                    {% endif %}
+
+                    <table class="table table-borderless table-sm mb-0">
+                        <tr>
+                            <td class="text-muted" style="width:40%;">Availability</td>
+                            <td>{{ user.availability or 'Not set' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Learning Style</td>
+                            <td>{{ user.learning_preference|capitalize or 'Not set' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Experience</td>
+                            <td>{{ user.experience_years or 0 }} years</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Member Since</td>
+                            <td>{{ user.created_at.strftime('%b %Y') if user.created_at else 'N/A' }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-mortarboard"></i> Skills I Teach</h5>
+                </div>
+                <div class="card-body">
+                    {% if skills_teach %}
+                        <div class="row">
+                            {% for us in skills_teach %}
+                                <div class="col-md-6 mb-2">
+                                    <div class="d-flex align-items-center p-2 bg-light rounded">
+                                        <div class="flex-grow-1">
+                                            <strong>{{ us.skill.name }}</strong>
+                                            <br><small class="text-muted">{{ us.skill.category }}</small>
+                                        </div>
+                                        <span class="badge bg-success">{{ us.level }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No skills listed.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-book"></i> Skills I Want to Learn</h5>
+                </div>
+                <div class="card-body">
+                    {% if skills_learn %}
+                        <div class="row">
+                            {% for us in skills_learn %}
+                                <div class="col-md-6 mb-2">
+                                    <div class="d-flex align-items-center p-2 bg-light rounded">
+                                        <div class="flex-grow-1">
+                                            <strong>{{ us.skill.name }}</strong>
+                                            <br><small class="text-muted">{{ us.skill.category }}</small>
+                                        </div>
+                                        <span class="badge bg-info">{{ us.level }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No skills listed.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-star"></i> Reviews</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-0">No reviews yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

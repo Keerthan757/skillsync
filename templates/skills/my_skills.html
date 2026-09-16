@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% block title %}My Skills - SkillSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold" style="color:var(--gray-900);"><i class="bi bi-bookmark-star text-primary me-2"></i>My Skills</h2>
+            <p class="text-muted">Manage the skills you teach and want to learn</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-mortarboard text-success me-2"></i>Skills I Teach</h5>
+                    <span class="badge" style="background:rgba(16,185,129,0.1);color:var(--success);">{{ skills_teach|length }}</span>
+                </div>
+                <div class="card-body">
+                    {% if skills_teach %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Skill</th>
+                                        <th>Category</th>
+                                        <th>Level</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for us in skills_teach %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url_for('skills.skill_detail', skill_id=us.skill.id) }}"
+                                                   class="text-decoration-none fw-semibold" style="color:var(--gray-900);">
+                                                    {{ us.skill.name }}
+                                                </a>
+                                            </td>
+                                            <td><span class="badge" style="background:var(--gray-100);color:var(--gray-600);">{{ us.skill.category }}</span></td>
+                                            <td>
+                                                <form method="POST" action="{{ url_for('skills.update_skill', user_skill_id=us.id) }}" class="d-inline">
+                                                    <select name="level" class="form-select form-select-sm d-inline w-auto"
+                                                            onchange="this.form.submit()" style="min-width:110px;">
+                                                        {% for level in ['Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
+                                                            <option value="{{ level }}" {{ 'selected' if us.level == level }}>{{ level }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </form>
+                                            </td>
+                                            <td class="text-end">
+                                                <form method="POST" action="{{ url_for('skills.remove_skill', user_skill_id=us.id) }}"
+                                                      class="d-inline" onsubmit="return confirm('Remove this skill?')">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <div class="mx-auto mb-2 d-flex align-items-center justify-content-center"
+                                 style="width:48px;height:48px;border-radius:var(--radius-lg);background:var(--gray-100);">
+                                <i class="bi bi-mortarboard text-muted"></i>
+                            </div>
+                            <p class="text-muted small mb-2">No skills to teach yet.</p>
+                            <a href="#addSkillSection" class="btn btn-sm btn-outline-success">Add Skills</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-book text-info me-2"></i>Skills I Want to Learn</h5>
+                    <span class="badge" style="background:rgba(6,182,212,0.1);color:var(--info);">{{ skills_learn|length }}</span>
+                </div>
+                <div class="card-body">
+                    {% if skills_learn %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Skill</th>
+                                        <th>Category</th>
+                                        <th>Level</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for us in skills_learn %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url_for('skills.skill_detail', skill_id=us.skill.id) }}"
+                                                   class="text-decoration-none fw-semibold" style="color:var(--gray-900);">
+                                                    {{ us.skill.name }}
+                                                </a>
+                                            </td>
+                                            <td><span class="badge" style="background:var(--gray-100);color:var(--gray-600);">{{ us.skill.category }}</span></td>
+                                            <td>
+                                                <form method="POST" action="{{ url_for('skills.update_skill', user_skill_id=us.id) }}" class="d-inline">
+                                                    <select name="level" class="form-select form-select-sm d-inline w-auto"
+                                                            onchange="this.form.submit()" style="min-width:110px;">
+                                                        {% for level in ['Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
+                                                            <option value="{{ level }}" {{ 'selected' if us.level == level }}>{{ level }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </form>
+                                            </td>
+                                            <td class="text-end">
+                                                <form method="POST" action="{{ url_for('skills.remove_skill', user_skill_id=us.id) }}"
+                                                      class="d-inline" onsubmit="return confirm('Remove this skill?')">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <div class="mx-auto mb-2 d-flex align-items-center justify-content-center"
+                                 style="width:48px;height:48px;border-radius:var(--radius-lg);background:var(--gray-100);">
+                                <i class="bi bi-book text-muted"></i>
+                            </div>
+                            <p class="text-muted small mb-2">No learning goals yet.</p>
+                            <a href="#addSkillSection" class="btn btn-sm btn-outline-info">Add Skills</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4" id="addSkillSection">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="fw-bold mb-0"><i class="bi bi-plus-circle text-primary me-2"></i>Add Existing Skill</h6>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('skills.add_skill') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Search Skill</label>
+                            <input type="text" class="form-control" id="skillSearch" placeholder="Type to search..."
+                                   autocomplete="off">
+                            <input type="hidden" name="skill_id" id="skillId">
+                            <div id="skillResults" class="list-group mt-1"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">I want to...</label>
+                            <select name="skill_type" class="form-select">
+                                <option value="teach">Teach This Skill</option>
+                                <option value="learn">Learn This Skill</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">My Level</label>
+                            <select name="level" class="form-select">
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate" selected>Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                                <option value="Expert">Expert</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" id="addSkillBtn" disabled>
+                            <i class="bi bi-plus"></i> Add Skill
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="fw-bold mb-0"><i class="bi bi-plus-circle-dotted text-primary me-2"></i>Add Custom Skill</h6>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('skills.add_custom_skill') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Skill Name</label>
+                            <input type="text" class="form-control" name="skill_name"
+                                   placeholder="e.g. Kubernetes" required minlength="2">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select">
+                                {% for cat in categories %}
+                                    <option value="{{ cat }}">{{ cat }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">I want to...</label>
+                            <select name="skill_type" class="form-select">
+                                <option value="teach">Teach This Skill</option>
+                                <option value="learn">Learn This Skill</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">My Level</label>
+                            <select name="level" class="form-select">
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate" selected>Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                                <option value="Expert">Expert</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-plus"></i> Add Custom Skill
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('skillSearch').addEventListener('input', function() {
+    var q = this.value;
+    var results = document.getElementById('skillResults');
+    var skillIdInput = document.getElementById('skillId');
+    var addBtn = document.getElementById('addSkillBtn');
+
+    if (q.length < 2) {
+        results.innerHTML = '';
+        skillIdInput.value = '';
+        addBtn.disabled = true;
+        return;
+    }
+
+    fetch('/api/skills/search?q=' + encodeURIComponent(q))
+        .then(function(r) { return r.json(); })
+        .then(function(skills) {
+            results.innerHTML = '';
+            skills.forEach(function(skill) {
+                var item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'list-group-item list-group-item-action';
+                item.textContent = skill.name + ' (' + skill.category + ')';
+                item.addEventListener('click', function() {
+                    document.getElementById('skillSearch').value = skill.name;
+                    skillIdInput.value = skill.id;
+                    addBtn.disabled = false;
+                    results.innerHTML = '';
+                });
+                results.appendChild(item);
+            });
+        });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Login - SkillSync{% endblock %}
+
+{% block content %}
+<div class="py-5" style="background:linear-gradient(135deg,var(--primary) 0%,#7c3aed 50%,var(--secondary) 100%);min-height:80vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card border-0 shadow-xl" style="border-radius:var(--radius-2xl);">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+                                 style="width:56px;height:56px;border-radius:var(--radius-xl);background:linear-gradient(135deg,var(--primary),var(--secondary));">
+                                <i class="bi bi-box-arrow-in-right text-white fs-4"></i>
+                            </div>
+                            <h3 class="fw-bold" style="color:var(--gray-900);">Welcome Back</h3>
+                            <p class="text-muted small">Log in to your SkillSync account</p>
+                        </div>
+
+                        <form method="POST" action="{{ url_for('auth.login') }}">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       value="{{ email|default('') }}" required
+                                       placeholder="you@example.com">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password"
+                                       required
+                                       placeholder="Enter your password">
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                                    <label class="form-check-label small" for="remember">Remember me</label>
+                                </div>
+                                <a href="{{ url_for('auth.forgot_password') }}" class="small text-decoration-none" style="color:var(--primary);">
+                                    Forgot password?
+                                </a>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-2.5 mb-3" style="font-size:1rem;">
+                                Log In <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </form>
+
+                        <div class="text-center">
+                            <p class="text-muted small mb-0">
+                                Don't have an account?
+                                <a href="{{ url_for('auth.register') }}" class="fw-semibold text-decoration-none" style="color:var(--primary);">Sign up</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
