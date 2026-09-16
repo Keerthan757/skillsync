@@ -80,6 +80,182 @@ def seed_skills():
             db.session.add(skill)
     db.session.commit()
 
+    seed_demo_users()
+
+
+def seed_demo_users():
+    if User.query.filter_by(is_email_verified=True).count() > 1:
+        return
+
+    demo_users = [
+        {
+            'name': 'Priya Sharma',
+            'email': 'priya@example.com',
+            'bio': 'Full-stack developer passionate about teaching Python and learning new frameworks.',
+            'location': 'Bangalore, India',
+            'availability': 'Weekends',
+            'learning_preference': 'online',
+            'experience_years': 5,
+            'xp': 85,
+            'level': 4,
+            'teach': [('Python', 'Expert'), ('JavaScript', 'Advanced'), ('React', 'Intermediate')],
+            'learn': [('Go', 'Beginner'), ('Machine Learning', 'Intermediate')],
+        },
+        {
+            'name': 'Marcus Chen',
+            'email': 'marcus@example.com',
+            'bio': 'UX designer by day, musician by night. Love collaborating on creative projects.',
+            'location': 'San Francisco, USA',
+            'availability': 'Evenings',
+            'learning_preference': 'online',
+            'experience_years': 4,
+            'xp': 62,
+            'level': 3,
+            'teach': [('UI/UX Design', 'Expert'), ('Figma', 'Advanced'), ('Photoshop', 'Intermediate')],
+            'learn': [('Python', 'Beginner'), ('Guitar', 'Intermediate')],
+        },
+        {
+            'name': 'Aisha Okafor',
+            'email': 'aisha@example.com',
+            'bio': 'Data scientist with a love for languages. Always looking to exchange skills!',
+            'location': 'Lagos, Nigeria',
+            'availability': 'Flexible',
+            'learning_preference': 'both',
+            'experience_years': 3,
+            'xp': 74,
+            'level': 4,
+            'teach': [('Machine Learning', 'Advanced'), ('Data Analysis', 'Expert'), ('Python', 'Advanced')],
+            'learn': [('Japanese', 'Beginner'), ('Public Speaking', 'Intermediate')],
+        },
+        {
+            'name': 'Tom Eriksson',
+            'email': 'tom@example.com',
+            'bio': 'Backend engineer specializing in cloud infrastructure. Teaching Docker & AWS.',
+            'location': 'Stockholm, Sweden',
+            'availability': 'Weekdays',
+            'learning_preference': 'online',
+            'experience_years': 6,
+            'xp': 91,
+            'level': 5,
+            'teach': [('Docker', 'Expert'), ('AWS', 'Expert'), ('Linux', 'Advanced')],
+            'learn': [('React', 'Intermediate'), ('Spanish', 'Beginner')],
+        },
+        {
+            'name': 'Sofia Rodriguez',
+            'email': 'sofia@example.com',
+            'bio': 'Digital marketer and SEO specialist. Fluent in 3 languages.',
+            'location': 'Barcelona, Spain',
+            'availability': 'Weekends',
+            'learning_preference': 'both',
+            'experience_years': 4,
+            'xp': 55,
+            'level': 3,
+            'teach': [('Digital Marketing', 'Expert'), ('SEO', 'Advanced'), ('Spanish', 'Expert')],
+            'learn': [('Python', 'Beginner'), ('Photography', 'Intermediate')],
+        },
+        {
+            'name': 'Kenji Tanaka',
+            'email': 'kenji@example.com',
+            'bio': 'Mobile developer from Tokyo. Expert in Swift and Kotlin, learning web dev.',
+            'location': 'Tokyo, Japan',
+            'availability': 'Evenings',
+            'learning_preference': 'online',
+            'experience_years': 5,
+            'xp': 78,
+            'level': 4,
+            'teach': [('Swift', 'Expert'), ('Kotlin', 'Advanced'), ('Japanese', 'Expert')],
+            'learn': [('Vue.js', 'Beginner'), ('CSS', 'Intermediate')],
+        },
+        {
+            'name': 'Emma Wilson',
+            'email': 'emma@example.com',
+            'bio': 'Project manager and business strategist. Love helping others organize their work.',
+            'location': 'London, UK',
+            'availability': 'Weekdays',
+            'learning_preference': 'online',
+            'experience_years': 7,
+            'xp': 95,
+            'level': 5,
+            'teach': [('Project Management', 'Expert'), ('Business Strategy', 'Expert'), ('Public Speaking', 'Advanced')],
+            'learn': [('JavaScript', 'Beginner'), ('Data Analysis', 'Intermediate')],
+        },
+        {
+            'name': 'Raj Patel',
+            'email': 'raj@example.com',
+            'bio': 'Music producer and audio engineer. Teach music production, learn to code.',
+            'location': 'Mumbai, India',
+            'availability': 'Flexible',
+            'learning_preference': 'both',
+            'experience_years': 3,
+            'xp': 45,
+            'level': 3,
+            'teach': [('Music Production', 'Expert'), ('Guitar', 'Advanced'), ('Piano', 'Intermediate')],
+            'learn': [('Python', 'Beginner'), ('JavaScript', 'Beginner')],
+        },
+        {
+            'name': 'Lena Mueller',
+            'email': 'lena@example.com',
+            'bio': 'Frontend developer and design enthusiast. Passionate about accessible UIs.',
+            'location': 'Berlin, Germany',
+            'availability': 'Weekends',
+            'learning_preference': 'online',
+            'experience_years': 3,
+            'xp': 58,
+            'level': 3,
+            'teach': [('HTML', 'Expert'), ('CSS', 'Expert'), ('React', 'Advanced'), ('Figma', 'Intermediate')],
+            'learn': [('Machine Learning', 'Beginner'), ('German', 'Expert')],
+        },
+        {
+            'name': 'David Kim',
+            'email': 'david@example.com',
+            'bio': 'Database administrator and SQL expert. Also into photography.',
+            'location': 'Seoul, South Korea',
+            'availability': 'Evenings',
+            'learning_preference': 'online',
+            'experience_years': 5,
+            'xp': 70,
+            'level': 4,
+            'teach': [('SQL', 'Expert'), ('PostgreSQL', 'Expert'), ('MongoDB', 'Advanced'), ('Photography', 'Advanced')],
+            'learn': [('React', 'Intermediate'), ('Writing', 'Beginner')],
+        },
+    ]
+
+    for data in demo_users:
+        existing = User.query.filter_by(email=data['email']).first()
+        if existing:
+            continue
+
+        user = User(
+            name=data['name'],
+            email=data['email'],
+            is_active=True,
+            is_email_verified=True,
+            bio=data['bio'],
+            location=data['location'],
+            availability=data['availability'],
+            learning_preference=data['learning_preference'],
+            experience_years=data['experience_years'],
+            xp=data['xp'],
+            level=data['level'],
+        )
+        user.set_password('demo1234')
+        db.session.add(user)
+        db.session.flush()
+
+        for skill_name, level in data['teach']:
+            skill = Skill.query.filter_by(name=skill_name).first()
+            if skill:
+                us = UserSkill(user_id=user.id, skill_id=skill.id, skill_type='teach', level=level)
+                db.session.add(us)
+
+        for skill_name, level in data['learn']:
+            skill = Skill.query.filter_by(name=skill_name).first()
+            if skill:
+                us = UserSkill(user_id=user.id, skill_id=skill.id, skill_type='learn', level=level)
+                db.session.add(us)
+
+    db.session.commit()
+
 
 @skills_bp.route('/skills')
 def browse_skills():
