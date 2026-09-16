@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block title %}My Sessions - SkillSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold" style="color:var(--gray-900);"><i class="bi bi-calendar-check text-primary me-2"></i>My Sessions</h2>
+            <p class="text-muted">Your scheduled learning and teaching sessions</p>
+        </div>
+    </div>
+
+    <ul class="nav nav-pills mb-4">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="pill" href="#teaching">
+                <i class="bi bi-person-workspace me-1"></i> Teaching ({{ teaching|length }})
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="pill" href="#learning">
+                <i class="bi bi-book me-1"></i> Learning ({{ learning|length }})
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="teaching">
+            {% if teaching %}
+                <div class="row g-4">
+                    {% for s in teaching %}
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <span class="skill-tag teach">{{ s.skill.name }}</span>
+                                            <h6 class="fw-bold mt-2 mb-0">
+                                                with {{ s.learner.name }}
+                                            </h6>
+                                        </div>
+                                        {% if s.status == 'scheduled' %}
+                                            <span class="badge bg-success-subtle text-success">Scheduled</span>
+                                        {% elif s.status == 'completed' %}
+                                            <span class="badge bg-info-subtle text-info">Completed</span>
+                                        {% elif s.status == 'cancelled' %}
+                                            <span class="badge" style="background:var(--gray-100);color:var(--gray-600);">Cancelled</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="mb-3 p-3 rounded" style="background:var(--gray-50);">
+                                        <p class="mb-1"><i class="bi bi-calendar3 text-primary me-2"></i>{{ s.session_date.strftime('%A, %B %d, %Y') }}</p>
+                                        <p class="mb-1"><i class="bi bi-clock text-primary me-2"></i>{{ s.start_time.strftime('%I:%M %p') }} - {{ s.end_time.strftime('%I:%M %p') }}</p>
+                                        <p class="mb-0"><i class="bi bi-{{ 'camera-video' if s.mode == 'online' else 'geo-alt' }} text-primary me-2"></i>{{ s.mode|capitalize }}</p>
+                                    </div>
+
+                                    {% if s.meeting_link and s.mode == 'online' %}
+                                        <p class="small mb-3"><a href="{{ s.meeting_link }}" target="_blank" class="text-primary"><i class="bi bi-link-45deg"></i> Meeting Link</a></p>
+                                    {% endif %}
+
+                                    {% if s.status == 'scheduled' %}
+                                        <div class="d-flex gap-2">
+                                            <form method="POST" action="{{ url_for('sessions.complete_session', session_id=s.id) }}" class="flex-grow-1">
+                                                <button type="submit" class="btn btn-success btn-sm w-100">
+                                                    <i class="bi bi-check-lg"></i> Complete
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ url_for('sessions.cancel_session', session_id=s.id) }}">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                    <i class="bi bi-x-circle"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {% elif s.status == 'completed' %}
+                                        {% set has_review = false %}
+                                        <a href="{{ url_for('reviews.leave_review', session_id=s.id) }}" class="btn btn-outline-primary btn-sm w-100">
+                                            <i class="bi bi-star"></i> Leave Review
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="card border-0 shadow-sm text-center py-5">
+                    <div class="card-body">
+                        <i class="bi bi-calendar-x fs-1 text-muted mb-3"></i>
+                        <h5 class="fw-bold">No teaching sessions</h5>
+                        <p class="text-muted">Accept an exchange request to start teaching.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="learning">
+            {% if learning %}
+                <div class="row g-4">
+                    {% for s in learning %}
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <span class="skill-tag learn">{{ s.skill.name }}</span>
+                                            <h6 class="fw-bold mt-2 mb-0">
+                                                with {{ s.teacher.name }}
+                                            </h6>
+                                        </div>
+                                        {% if s.status == 'scheduled' %}
+                                            <span class="badge bg-success-subtle text-success">Scheduled</span>
+                                        {% elif s.status == 'completed' %}
+                                            <span class="badge bg-info-subtle text-info">Completed</span>
+                                        {% elif s.status == 'cancelled' %}
+                                            <span class="badge" style="background:var(--gray-100);color:var(--gray-600);">Cancelled</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="mb-3 p-3 rounded" style="background:var(--gray-50);">
+                                        <p class="mb-1"><i class="bi bi-calendar3 text-primary me-2"></i>{{ s.session_date.strftime('%A, %B %d, %Y') }}</p>
+                                        <p class="mb-1"><i class="bi bi-clock text-primary me-2"></i>{{ s.start_time.strftime('%I:%M %p') }} - {{ s.end_time.strftime('%I:%M %p') }}</p>
+                                        <p class="mb-0"><i class="bi bi-{{ 'camera-video' if s.mode == 'online' else 'geo-alt' }} text-primary me-2"></i>{{ s.mode|capitalize }}</p>
+                                    </div>
+
+                                    {% if s.meeting_link and s.mode == 'online' %}
+                                        <p class="small mb-3"><a href="{{ s.meeting_link }}" target="_blank" class="text-primary"><i class="bi bi-link-45deg"></i> Meeting Link</a></p>
+                                    {% endif %}
+
+                                    {% if s.status == 'scheduled' %}
+                                        <div class="d-flex gap-2">
+                                            <form method="POST" action="{{ url_for('sessions.complete_session', session_id=s.id) }}" class="flex-grow-1">
+                                                <button type="submit" class="btn btn-success btn-sm w-100">
+                                                    <i class="bi bi-check-lg"></i> Complete
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ url_for('sessions.cancel_session', session_id=s.id) }}">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                    <i class="bi bi-x-circle"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {% elif s.status == 'completed' %}
+                                        <a href="{{ url_for('reviews.leave_review', session_id=s.id) }}" class="btn btn-outline-primary btn-sm w-100">
+                                            <i class="bi bi-star"></i> Leave Review
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="card border-0 shadow-sm text-center py-5">
+                    <div class="card-body">
+                        <i class="bi bi-calendar-x fs-1 text-muted mb-3"></i>
+                        <h5 class="fw-bold">No learning sessions</h5>
+                        <p class="text-muted">Accept an exchange request to start learning.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

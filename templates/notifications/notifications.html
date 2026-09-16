@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Notifications - SkillSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color:var(--gray-900);"><i class="bi bi-bell text-primary me-2"></i>Notifications</h2>
+            <p class="text-muted">
+                {% if unread_count > 0 %}
+                    You have <strong>{{ unread_count }}</strong> unread notification{{ 's' if unread_count != 1 }}
+                {% else %}
+                    You're all caught up!
+                {% endif %}
+            </p>
+        </div>
+        {% if unread_count > 0 %}
+            <form method="POST" action="{{ url_for('notifications.mark_all_read') }}">
+                <button type="submit" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-check-all"></i> Mark All Read
+                </button>
+            </form>
+        {% endif %}
+    </div>
+
+    {% if notifications %}
+        <div class="list-group">
+            {% for notif in notifications %}
+                <div class="list-group-item list-group-item-action border-0 shadow-sm mb-2 rounded {% if not notif.is_read %}border-start border-primary border-4{% endif %}"
+                     style="background:{{ 'rgba(99,102,241,0.03)' if not notif.is_read else 'var(--white)' }};">
+                    <div class="d-flex justify-content-between align-items-start p-3">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="mt-1">
+                                {% if notif.notification_type == 'exchange_request' %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:40px;height:40px;background:rgba(6,182,212,0.1);">
+                                        <i class="bi bi-envelope text-info"></i>
+                                    </div>
+                                {% elif notif.notification_type == 'exchange_accepted' %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:40px;height:40px;background:rgba(16,185,129,0.1);">
+                                        <i class="bi bi-check-circle text-success"></i>
+                                    </div>
+                                {% elif notif.notification_type == 'exchange_rejected' %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:40px;height:40px;background:rgba(239,68,68,0.1);">
+                                        <i class="bi bi-x-circle text-danger"></i>
+                                    </div>
+                                {% elif notif.notification_type == 'session_scheduled' %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:40px;height:40px;background:rgba(99,102,241,0.1);">
+                                        <i class="bi bi-calendar-plus text-primary"></i>
+                                    </div>
+                                {% elif notif.notification_type == 'session_cancelled' %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:40px;height:40px;background:rgba(245,158,11,0.1);">
+                                        <i class="bi bi-calendar-x text-warning"></i>
+                                    </div>
+                                {% elif notif.notification_type == 'session_completed' %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:40px;height:40px;background:rgba(16,185,129,0.1);">
+                                        <i class="bi bi-calendar-check text-success"></i>
+                                    </div>
+                                {% elif notif.notification_type == 'review' %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:40px;height:40px;background:rgba(245,158,11,0.1);">
+                                        <i class="bi bi-star text-warning"></i>
+                                    </div>
+                                {% else %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:40px;height:40px;background:var(--gray-100);">
+                                        <i class="bi bi-bell text-muted"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 {% if not notif.is_read %}text-primary{% endif %}">{{ notif.title }}</h6>
+                                <p class="text-muted mb-1 small">{{ notif.message }}</p>
+                                <small class="text-muted">{{ notif.created_at.strftime('%b %d, %Y at %I:%M %p') }}</small>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center">
+                            {% if not notif.is_read %}
+                                <form method="POST" action="{{ url_for('notifications.mark_read', notif_id=notif.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary" title="Mark as read">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
+                                </form>
+                            {% endif %}
+                            {% if notif.link %}
+                                <a href="{{ notif.link }}" class="btn btn-sm btn-outline-secondary" title="View">
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm text-center py-5">
+            <div class="card-body">
+                <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+                     style="width:72px;height:72px;border-radius:50%;background:var(--gray-100);">
+                    <i class="bi bi-bell-slash fs-2 text-muted"></i>
+                </div>
+                <h5 class="fw-bold">No notifications</h5>
+                <p class="text-muted">You're all caught up! Notifications will appear here.</p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

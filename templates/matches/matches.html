@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}My Matches - SkillSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold" style="color:var(--gray-900);"><i class="bi bi-arrow-left-right text-primary me-2"></i>My Matches</h2>
+            <p class="text-muted">People whose skills complement yours</p>
+        </div>
+    </div>
+
+    {% if matches %}
+        <div class="row g-4">
+            {% for item in matches %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100 user-card">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                {% if item.other.profile_picture %}
+                                    <img src="{{ url_for('static', filename='images/profiles/' + item.other.profile_picture) }}"
+                                         class="rounded-circle me-3" width="48" height="48"
+                                         style="object-fit:cover;" alt="">
+                                {% else %}
+                                    <div class="user-avatar me-3" style="background:linear-gradient(135deg,var(--primary),var(--secondary));">
+                                        {{ item.other.name[0].upper() }}
+                                    </div>
+                                {% endif %}
+                                <div class="flex-grow-1">
+                                    <h6 class="fw-bold mb-0">
+                                        <a href="{{ url_for('profile.view_public_profile', user_id=item.other.id) }}"
+                                           class="text-decoration-none" style="color:var(--gray-900);">{{ item.other.name }}</a>
+                                    </h6>
+                                    {% if item.other.location %}
+                                        <small class="text-muted"><i class="bi bi-geo-alt"></i> {{ item.other.location }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="match-score">
+                                    <small class="text-muted">Match</small>
+                                    <div class="score-bar">
+                                        <div class="score-fill" style="width:{{ item.match.match_score }}%;background:{{ 'var(--success)' if item.match.match_score >= 70 else 'var(--warning)' if item.match.match_score >= 40 else 'var(--gray-400)' }};"></div>
+                                    </div>
+                                    <span class="score-value" style="color:{{ 'var(--success)' if item.match.match_score >= 70 else 'var(--warning)' if item.match.match_score >= 40 else 'var(--gray-500)' }};">
+                                        {{ item.match.match_score }}%
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                                <div>
+                                    {% if item.match.status == 'accepted' %}
+                                        <span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle me-1"></i>Accepted</span>
+                                    {% elif item.match.status == 'pending' %}
+                                        <span class="badge bg-warning-subtle text-warning"><i class="bi bi-clock me-1"></i>Pending</span>
+                                    {% else %}
+                                        <span class="badge" style="background:var(--gray-100);color:var(--gray-600);">{{ item.match.status|capitalize }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex gap-2">
+                                    {% if item.other.id in existing_request_ids %}
+                                        <span class="badge bg-info-subtle text-info"><i class="bi bi-envelope-check me-1"></i>Requested</span>
+                                    {% endif %}
+                                    <a href="{{ url_for('matches.match_detail', match_id=item.match.id) }}"
+                                       class="btn btn-sm btn-outline-primary">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm text-center py-5">
+            <div class="card-body">
+                <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+                     style="width:72px;height:72px;border-radius:50%;background:var(--gray-100);">
+                    <i class="bi bi-arrow-left-right fs-2 text-muted"></i>
+                </div>
+                <h5 class="fw-bold">No matches yet</h5>
+                <p class="text-muted">Discover people with complementary skills to get matched.</p>
+                <a href="{{ url_for('discover.discover') }}" class="btn btn-primary">
+                    <i class="bi bi-compass"></i> Discover People
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

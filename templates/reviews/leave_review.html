@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Leave Review - SkillSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('sessions.my_sessions') }}">Sessions</a></li>
+            <li class="breadcrumb-item active">Leave Review</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-2"><i class="bi bi-star text-warning me-2"></i>Leave a Review</h4>
+                    <p class="text-muted mb-4">Share your experience about this {{ session.skill.name }} session</p>
+
+                    <div class="p-3 rounded mb-4" style="background:var(--gray-50);">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="skill-tag {{ 'teach' if current_user.id == session.teacher_id else 'learn' }}">{{ session.skill.name }}</span>
+                            <span class="text-muted">|</span>
+                            <span class="text-muted">{{ session.session_date.strftime('%b %d, %Y') }}</span>
+                            <span class="text-muted">|</span>
+                            <span class="text-muted">
+                                {{ session.teacher.name if current_user.id == session.teacher_id else session.learner.name }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('reviews.leave_review', session_id=session.id) }}">
+                        <div class="mb-4 text-center">
+                            <label class="form-label d-block mb-2">Rating</label>
+                            <div class="rating-stars d-inline-flex gap-1" id="ratingStars">
+                                {% for i in range(1, 6) %}
+                                    <button type="button" class="btn p-1 star-btn" data-rating="{{ i }}" onclick="setRating({{ i }})">
+                                        <i class="bi bi-star fs-3" id="star{{ i }}" style="color:var(--gray-300);"></i>
+                                    </button>
+                                {% endfor %}
+                            </div>
+                            <input type="hidden" name="rating" id="ratingInput" value="">
+                            <div class="mt-2" id="ratingText" class="text-muted small"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Comment (optional)</label>
+                            <textarea name="comment" class="form-control" rows="4"
+                                      placeholder="How was your experience? What did you learn?"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" id="submitBtn" disabled>
+                            <i class="bi bi-send"></i> Submit Review
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+const labels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+function setRating(r) {
+    document.getElementById('ratingInput').value = r;
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('ratingText').textContent = labels[r];
+    for (let i = 1; i <= 5; i++) {
+        const star = document.getElementById('star' + i);
+        if (i <= r) {
+            star.classList.remove('bi-star');
+            star.classList.add('bi-star-fill');
+            star.style.color = 'var(--warning)';
+        } else {
+            star.classList.remove('bi-star-fill');
+            star.classList.add('bi-star');
+            star.style.color = 'var(--gray-300)';
+        }
+    }
+}
+</script>
+{% endblock %}
+{% endblock %}

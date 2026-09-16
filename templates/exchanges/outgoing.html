@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Outgoing Requests - SkillSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color:var(--gray-900);"><i class="bi bi-send text-primary me-2"></i>Outgoing Requests</h2>
+            <p class="text-muted">Exchange requests you've sent</p>
+        </div>
+        <a href="{{ url_for('exchanges.incoming_requests') }}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-inbox"></i> Incoming
+        </a>
+    </div>
+
+    {% if requests %}
+        <div class="row g-4">
+            {% for er in requests %}
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                {% if er.receiver.profile_picture %}
+                                    <img src="{{ url_for('static', filename='images/profiles/' + er.receiver.profile_picture) }}"
+                                         class="rounded-circle me-3" width="44" height="44" style="object-fit:cover;" alt="">
+                                {% else %}
+                                    <div class="user-avatar me-3" style="width:44px;height:44px;font-size:1rem;background:linear-gradient(135deg,var(--primary),var(--secondary));">
+                                        {{ er.receiver.name[0].upper() }}
+                                    </div>
+                                {% endif %}
+                                <div class="flex-grow-1">
+                                    <h6 class="fw-bold mb-0">
+                                        <a href="{{ url_for('profile.view_public_profile', user_id=er.receiver.id) }}"
+                                           class="text-decoration-none" style="color:var(--gray-900);">{{ er.receiver.name }}</a>
+                                    </h6>
+                                    <small class="text-muted">{{ er.created_at.strftime('%b %d, %Y') }}</small>
+                                </div>
+                                {% if er.status == 'pending' %}
+                                    <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                {% elif er.status == 'accepted' %}
+                                    <span class="badge bg-success-subtle text-success">Accepted</span>
+                                {% elif er.status == 'rejected' %}
+                                    <span class="badge bg-danger-subtle text-danger">Rejected</span>
+                                {% elif er.status == 'cancelled' %}
+                                    <span class="badge" style="background:var(--gray-100);color:var(--gray-600);">Cancelled</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded" style="background:var(--gray-50);">
+                                <span class="skill-tag teach">{{ er.skill_offered.name }}</span>
+                                <i class="bi bi-arrow-left-right text-muted"></i>
+                                <span class="skill-tag learn">{{ er.skill_wanted.name }}</span>
+                            </div>
+
+                            {% if er.message %}
+                                <p class="text-muted small mb-3" style="font-style:italic;">"{{ er.message }}"</p>
+                            {% endif %}
+
+                            <div class="d-flex gap-2">
+                                {% if er.status == 'pending' %}
+                                    <form method="POST" action="{{ url_for('exchanges.cancel_request', request_id=er.id) }}" class="flex-grow-1">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                            <i class="bi bi-x-circle"></i> Cancel
+                                        </button>
+                                    </form>
+                                {% elif er.status == 'accepted' %}
+                                    <a href="{{ url_for('sessions.schedule_session', request_id=er.id) }}" class="btn btn-primary btn-sm flex-grow-1">
+                                        <i class="bi bi-calendar-plus"></i> Schedule Session
+                                    </a>
+                                {% endif %}
+                                <a href="{{ url_for('profile.view_public_profile', user_id=er.receiver.id) }}" class="btn btn-outline-secondary btn-sm">View Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm text-center py-5">
+            <div class="card-body">
+                <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+                     style="width:72px;height:72px;border-radius:50%;background:var(--gray-100);">
+                    <i class="bi bi-send fs-2 text-muted"></i>
+                </div>
+                <h5 class="fw-bold">No outgoing requests</h5>
+                <p class="text-muted">Find someone to exchange skills with and send them a request.</p>
+                <a href="{{ url_for('discover.discover') }}" class="btn btn-primary">
+                    <i class="bi bi-compass"></i> Discover People
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

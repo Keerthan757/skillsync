@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Reviews for {{ user.name }} - SkillSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('profile.view_public_profile', user_id=user.id) }}">{{ user.name }}</a></li>
+            <li class="breadcrumb-item active">Reviews</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 text-center">
+                    {% if user.profile_picture %}
+                        <img src="{{ url_for('static', filename='images/profiles/' + user.profile_picture) }}"
+                             class="rounded-circle mb-3" width="64" height="64" style="object-fit:cover;" alt="">
+                    {% else %}
+                        <div class="user-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:1.5rem;background:linear-gradient(135deg,var(--primary),var(--secondary));">
+                            {{ user.name[0].upper() }}
+                        </div>
+                    {% endif %}
+                    <h5 class="fw-bold mb-1">{{ user.name }}</h5>
+                    <p class="text-muted small mb-3">Reviews received</p>
+
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center justify-content-center gap-2">
+                            <span class="fs-2 fw-bold" style="color:var(--warning);">{{ avg_rating }}</span>
+                            <div>
+                                {% for i in range(5) %}
+                                    {% if i < avg_rating|int %}
+                                        <i class="bi bi-star-fill" style="color:var(--warning);"></i>
+                                    {% elif i < avg_rating %}
+                                        <i class="bi bi-star-half" style="color:var(--warning);"></i>
+                                    {% else %}
+                                        <i class="bi bi-star" style="color:var(--gray-300);"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <small class="text-muted">{{ reviews|length }} review{{ 's' if reviews|length != 1 }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            {% if reviews %}
+                {% for review in reviews %}
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex align-items-center">
+                                    {% if review.reviewer.profile_picture %}
+                                        <img src="{{ url_for('static', filename='images/profiles/' + review.reviewer.profile_picture) }}"
+                                             class="rounded-circle me-2" width="32" height="32" style="object-fit:cover;" alt="">
+                                    {% else %}
+                                        <div class="user-avatar me-2" style="width:32px;height:32px;font-size:0.75rem;background:linear-gradient(135deg,var(--primary),var(--secondary));">
+                                            {{ review.reviewer.name[0].upper() }}
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <a href="{{ url_for('profile.view_public_profile', user_id=review.reviewer.id) }}"
+                                           class="fw-bold text-decoration-none" style="color:var(--gray-900);">{{ review.reviewer.name }}</a>
+                                        <br><small class="text-muted">{{ review.created_at.strftime('%b %d, %Y') }}</small>
+                                    </div>
+                                </div>
+                                <div>
+                                    {% for i in range(5) %}
+                                        <i class="bi bi-{{ 'star-fill' if i < review.rating else 'star' }}"
+                                           style="color:{{ 'var(--warning)' if i < review.rating else 'var(--gray-300)' }};"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% if review.comment %}
+                                <p class="text-muted mb-0 mt-2">{{ review.comment }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="card border-0 shadow-sm text-center py-5">
+                    <div class="card-body">
+                        <i class="bi bi-star fs-1 text-muted mb-3"></i>
+                        <h5 class="fw-bold">No reviews yet</h5>
+                        <p class="text-muted">This user hasn't received any reviews yet.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
